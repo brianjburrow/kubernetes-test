@@ -1,0 +1,12 @@
+apiVersion: v1 # Specifies the Kubernetes API version to use. For services, it's "v1".
+kind: Service # Specifies the resource type, which in this case is a "Service".
+metadata:
+  name: mysql # Sets the name of the service as "mysql". This name will be used to access the service (like a DNS name).
+spec: # Begins the specification section, where the desired state for the service is defined.
+  selector: # Defines which pods this service will target based on labels.
+    app: mysql # Matches the pods that have the label "app: mysql" (which is the label given to the MySQL pod in the deployment).
+  ports: # Configures the ports that the service will expose.
+    - protocol: TCP # Specifies that the service should use the TCP protocol for communication.
+      port: 3306 # Exposes port 3306 on the service (the default MySQL port).
+      targetPort: 3306 # Forwards traffic from the service's port 3306 to the pod's port 3306.
+  clusterIP: None # Ensures the service has a "headless" configuration, which is useful for stateful sets or directly accessing pods (optional).

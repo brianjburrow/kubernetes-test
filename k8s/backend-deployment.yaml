@@ -1,0 +1,42 @@
+apiVersion: apps/v1 # Specifies that this is a Deployment object in Kubernetes API version apps/v1
+kind: Deployment # The resource type; Deployment manages the rollout of the backend app
+metadata:
+  name: backend-deployment # Name of the deployment
+spec:
+  replicas: 1 # Number of desired pod replicas (we want 1 instance of the backend)
+  selector:
+    matchLabels: # This selector matches the labels of the pods we want to manage
+      app: backend # The label must match the label set on the pod template (below)
+  template: # Defines the pod template that will be used to create the pods
+    metadata:
+      labels:
+        app: backend # This label is applied to the pods and used by the selector
+    spec:
+      containers: # Specifies the container definitions that should be inside the pod
+        - name: backend # Name of the container inside the pod
+          image: 10.105.247.24/backend-image:latest # The Docker image for the container (using the locally saved image)
+          ports:
+            - containerPort: 8080 # Port exposed by the container for communication
+          env:
+            - name: DB_HOST # Environment variable for the database host (set to MySQL service name)
+              value: "mysql" # The Kubernetes service name for the MySQL database, defined in mysql-service.yaml
+          resources: # Defines the resources (CPU and memory) that the container requests and limits
+            requests: # The minimum amount of resources that Kubernetes will allocate to the container
+              memory: "512Mi" # Requests 512Mi of memory for the container
+              cpu: "500m" # Requests 500m (half) CPU core for the container
+            limits: # The maximum amount of resources that the container can use
+              memory: "1Gi" # Limits the memory to 1Gi (1024Mi) for the container
+              cpu: "1" # Limits the CPU to 1 core for the container
+---
+apiVersion: v1 # Specifies that this is a Service object in Kubernetes API version v1
+kind: Service # The resource type; Service is responsible for exposing the backend to other services
+metadata:
+  name: backend-service # Name of the service (used to access the backend app from other services)
+spec:
+  selector:
+    app: backend # This selector ensures that the service routes traffic to pods with the 'app: backend' label
+  ports:
+    - protocol: TCP # The protocol used by the service
+      port: 8080 # The port that will be exposed by the service
+      targetPort: 8080 # The port inside the container that the service will route traffic to (should match containerPort)
+  type: ClusterIP # Specifies that this service is only accessible from within the Kubernetes cluster (default type)

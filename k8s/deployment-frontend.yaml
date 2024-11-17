@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1 # Number of replicas you want for the frontend
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: 10.105.247.24/frontend-image:latest # Make sure this matches the image you have loaded into Minikube
+          ports:
+            - containerPort: 80 # Port inside the container where your frontend app listens
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "100m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80 # Port exposed on the service
+      targetPort: 80 # Port your frontend app is listening on inside the container
+      nodePort: 30080 # Specify the node port (accessible on localhost)
+  type: NodePort # Exposes the service on a port on each node (including localhost in Minikube)

@@ -1,0 +1,31 @@
+apiVersion: apps/v1 # Defines which Kubernetes API version to use for deployments, ensuring compatibility with Deployment resources
+kind: Deployment # Specifies the resource type as a Deployment, which is responsible for managing the lifecycle of pods
+metadata:
+  name: mysql # Assigns a name to the Deployment, making it identifiable within Kubernetes for management and scaling purposes
+spec: # Begins the specification section, where the desired state for the Deployment is defined
+  selector: # Defines the label selector to identify the pods this Deployment will manage
+    matchLabels: # Ensures the Deployment manages pods with the given labels
+      app: mysql # Matches the pods with the label "app: mysql" to target them for this Deployment
+  replicas: 1 # Specifies the desired number of pod replicas, in this case, only one MySQL pod is needed
+  template: # Defines the template for creating new pods managed by the Deployment
+    metadata: # Specifies metadata for the pod, which can be used for identification
+      labels: # Labels are used to assign metadata to the pod for selection by Services or other resources
+        app: mysql # Assigns the label "app: mysql" to the pod so that it can be identified by the service
+    spec: # Describes the specifications of the containers and other pod details
+      containers: # Specifies the list of containers that should be run within this pod
+        - name: mysql # Names the container as "mysql", which is important for logging, management, and monitoring
+          image: mysql:8.0 # Specifies the image to use for the container, in this case, the official MySQL 8.0 Docker image
+          env: # Defines environment variables to pass configuration settings into the MySQL container
+            - name: MYSQL_ROOT_PASSWORD # Environment variable for setting the root password of MySQL
+              value: "password" # Sets the root password to "password" for initial database setup
+            - name: MYSQL_DATABASE # Defines the database that will be created upon container startup
+              value: "messages_db" # Creates a database called "messages_db" for the MySQL instance
+          ports: # Configures the ports the container will expose for network communication
+            - containerPort: 3306 # Exposes MySQL's default port (3306) for connecting to the database from other services or external clients
+          resources: # Defines the resources (CPU and memory) that the container requests and limits
+            requests: # The minimum amount of resources that Kubernetes will allocate to the container
+              memory: "512Mi" # Requests 512Mi of memory for the container
+              cpu: "500m" # Requests 500m (half) CPU core for the container
+            limits: # The maximum amount of resources that the container can use
+              memory: "1Gi" # Limits the memory to 1Gi (1024Mi) for the container
+              cpu: "1" # Limits the CPU to 1 core for the container
