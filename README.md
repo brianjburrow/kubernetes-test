@@ -23,9 +23,3 @@ Then, you'll need to open two new terminals and port-forward the frontend and ba
 kubectl port-forward deployment/frontend-deployment 8080:80
 kubectl port-forward deployment/backend-deployment 8081:80
 ```
-
-## Start pushing the images to the minikube registry
-
-```bash
-http://localhost:8080/
-```

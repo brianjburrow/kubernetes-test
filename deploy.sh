@@ -2,6 +2,7 @@
 
 # Set image tag (use a timestamp or a unique identifier for each build)
 IMAGE_TAG="latest"
+REGISTRY_IP=$(minikube ip)
 
 # Point the shell to minikube's docker-daemon by setting env variables
 eval $(minikube -p minikube docker-env)
